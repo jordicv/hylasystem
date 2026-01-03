@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Panel de inicio</h1>
+<div class="kpi-grid">
+  <div class="card kpi">
+    <div class="kpi-icon">KPI</div>
+    <h3>{{ g.user.role == 'ADMIN' and 'Demos activas totales' or g.user.role == 'JEFE' and 'Demos activas del equipo' or 'Mis demos activas' }}</h3>
+    <div class="kpi-value">{{ cards.activos }}</div>
+  </div>
+  <div class="card kpi">
+    <div class="kpi-icon">DEM</div>
+    <h3>Demos en DEMO_AGENDADA</h3>
+    <div class="kpi-value">{{ cards.demo_agendada }}</div>
+  </div>
+  <div class="card kpi">
+    <div class="kpi-icon">VEN</div>
+    <h3>Demos en VENTA_CERRADA</h3>
+    <div class="kpi-value">{{ cards.venta_cerrada }}</div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="card">
+    <h2>Pendientes</h2>
+    {% if pendientes %}
+      <ul class="list">
+        {% for lead in pendientes %}
+          <li>
+            <a href="{{ url_for('lead_detail', id=lead.id) }}">
+              {{ lead.first_name }} {{ lead.last_name }} - {{ lead.status }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">OK</div>
+        <p class="muted">No hay pendientes por ahora.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

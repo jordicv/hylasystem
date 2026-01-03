@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Editar usuario</h1>
+<form method="post" class="form-grid">
+  {{ csrf_input() }}
+  <label>Nombre
+    <input type="text" name="name" value="{{ user.name }}" required>
+  </label>
+  <label>Ciudad
+    <input type="text" name="city" value="{{ user.city }}" required>
+  </label>
+  <label>Rol
+    <select name="role" {% if jefe_scope %}disabled{% endif %}>
+      {% for role in roles %}
+        <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Estado
+    <select name="status">
+      {% for status in statuses %}
+        <option value="{{ status }}" {% if user.status == status %}selected{% endif %}>{{ status }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% if not jefe_scope %}
+  <input type="hidden" name="team_id" value="{{ user.team_id }}">
+  <label>Jefe de ventas
+    <select name="manager_user_id">
+      <option value="">Sin asignar</option>
+      {% for manager in managers %}
+        <option value="{{ manager.uid }}" {% if user.manager_user_id == manager.uid %}selected{% endif %}>
+          {{ manager.name }} ({{ manager.email }})
+        </option>
+      {% endfor %}
+    </select>
+  </label>
+  {% endif %}
+  <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

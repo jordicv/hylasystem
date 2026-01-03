@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Crear demo</h1>
+<form method="post" class="form-grid">
+  {{ csrf_input() }}
+  <label>Nombre
+    <input type="text" name="first_name" required>
+  </label>
+  <label>Apellido
+    <input type="text" name="last_name" required>
+  </label>
+  <label>Ocupación
+    <input type="text" name="occupation">
+  </label>
+  <label>WhatsApp
+    <input type="text" name="whatsapp_number" required placeholder="56912345678">
+  </label>
+  <label>Dirección
+    <input type="text" name="address_line">
+  </label>
+  <label>Comuna/Ciudad
+    <input type="text" name="city">
+  </label>
+  <label>Región
+    <input type="text" name="region">
+  </label>
+  <label>País
+    <input type="text" name="country" value="Chile">
+  </label>
+  <label>Estado
+    <select name="status">
+      {% for status in statuses %}
+        <option value="{{ status }}">{{ status }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% if demo_users %}
+  <label>Demo asignada a
+    <select name="demo_user_id">
+      <option value="">Sin asignar</option>
+      {% for user in demo_users %}
+        <option value="{{ user.uid }}">{{ user.name }} ({{ user.role }})</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% endif %}
+  <label>Notas
+    <textarea name="notes" rows="4"></textarea>
+  </label>
+  <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

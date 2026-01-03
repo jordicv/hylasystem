@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="header-row">
+  <h1>{{ lead.first_name }} {{ lead.last_name }}</h1>
+  <a class="btn btn-primary" href="{{ url_for('lead_edit', id=lead.id) }}">Editar</a>
+</div>
+
+<div class="card">
+  <p><strong>Ocupación:</strong> {{ lead.occupation }}</p>
+  <p><strong>WhatsApp:</strong> {{ lead.whatsapp_number }}</p>
+  <p><strong>Dirección:</strong> {{ lead.address_line }} - {{ lead.city }}, {{ lead.region }}, {{ lead.country }}</p>
+  <p><strong>Estado:</strong> <span class="badge">{{ lead.status }}</span></p>
+  <p><strong>Demo asignada a:</strong> {{ demo_user_map.get(lead.demo_user_id) or '-' }}</p>
+  <p><strong>Notas:</strong> {{ lead.notes }}</p>
+  <div class="actions">
+    <a class="btn btn-primary" href="{{ wa_link }}" target="_blank">Hablar por WhatsApp</a>
+    <a class="btn btn-outline" href="{{ wa_prefilled }}" target="_blank">WhatsApp con mensaje</a>
+    <a class="btn btn-outline" href="{{ maps_link }}" target="_blank">Ver en Google Maps</a>
+  </div>
+</div>
+
+<section class="section">
+  <h2>Imágenes</h2>
+  <form method="post" enctype="multipart/form-data" action="{{ url_for('lead_upload_image', id=lead.id) }}">
+    {{ csrf_input() }}
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit" class="btn btn-primary">Subir imagen</button>
+  </form>
+  <div class="gallery">
+    {% for image in images %}
+      <a href="{{ image.url }}" target="_blank">
+        <img src="{{ image.url }}" alt="Imagen">
+      </a>
+    {% else %}
+      <p>No hay imágenes.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2>Historial de cambios</h2>
+  <ul class="list">
+    {% for log in logs %}
+      <li>{{ log.timestamp }} - {{ log.actor_name }} - {{ log.action }}</li>
+    {% else %}
+      <li>Sin movimientos recientes.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

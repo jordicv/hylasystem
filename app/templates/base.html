@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HYLA CRM</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="{% if not g.user %}auth{% endif %}">
+  <div class="layout">
+    {% if g.user %}
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <img class="brand-logo" src="{{ url_for('static', filename='Hyla-International-Logo-black.svg') }}" alt="HYLA">
+        <span class="brand-sub">Sales Companion</span>
+      </div>
+      <nav class="side-nav">
+        <a class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">Inicio</a>
+        {% if g.user.role == 'ADMIN' %}
+          <a class="nav-item {% if request.endpoint == 'admin_users' or request.endpoint == 'admin_user_edit' %}active{% endif %}" href="{{ url_for('admin_users') }}">Usuarios</a>
+        {% elif g.user.role == 'JEFE' %}
+          <a class="nav-item {% if request.endpoint == 'jefe_users' or request.endpoint == 'jefe_user_edit' %}active{% endif %}" href="{{ url_for('jefe_users') }}">Mi equipo</a>
+        {% endif %}
+        <a class="nav-item {% if request.endpoint in ['leads_list', 'lead_new', 'lead_detail', 'lead_edit'] %}active{% endif %}" href="{{ url_for('leads_list') }}">Demos</a>
+      </nav>
+      <div class="side-user">
+        <div class="user-block">
+          <div class="user-name">{{ g.user.name }}</div>
+          <div class="user-meta">Rol: {{ g.user.role }}</div>
+          <div class="user-meta">Ciudad: {{ g.user.city }}</div>
+        </div>
+        <a class="btn btn-outline btn-block" href="{{ url_for('logout') }}">Cerrar sesión</a>
+      </div>
+    </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    {% endif %}
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          {% if g.user %}
+            <button class="icon-btn" id="sidebarToggle" type="button" aria-label="Abrir menú">Menu</button>
+          {% endif %}
+          <div class="topbar-title">
+            <img class="topbar-logo" src="{{ url_for('static', filename='Hyla-International-Logo-black.svg') }}" alt="HYLA">
+            <span class="topbar-subtitle">Sales Companion</span>
+          </div>
+        </div>
+        {% if g.user %}
+          <div class="topbar-user">
+            <div class="chip">{{ g.user.role }}</div>
+            <div class="chip secondary">{{ g.user.city }}</div>
+          </div>
+        {% else %}
+          <div class="topbar-meta">Acceso interno</div>
+        {% endif %}
+      </header>
+
+      <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-group">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% if g.user and g.user.status == 'PENDIENTE' %}
+          <div class="banner">Cuenta pendiente de activación. Puedes navegar, pero no realizar cambios.</div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

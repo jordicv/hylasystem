@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Editar demo</h1>
+<form method="post" class="form-grid">
+  {{ csrf_input() }}
+  <label>Nombre
+    <input type="text" name="first_name" value="{{ lead.first_name }}" required>
+  </label>
+  <label>Apellido
+    <input type="text" name="last_name" value="{{ lead.last_name }}" required>
+  </label>
+  <label>Ocupación
+    <input type="text" name="occupation" value="{{ lead.occupation }}">
+  </label>
+  <label>WhatsApp
+    <input type="text" name="whatsapp_number" value="{{ lead.whatsapp_number }}" required>
+  </label>
+  <label>Dirección
+    <input type="text" name="address_line" value="{{ lead.address_line }}">
+  </label>
+  <label>Comuna/Ciudad
+    <input type="text" name="city" value="{{ lead.city }}">
+  </label>
+  <label>Región
+    <input type="text" name="region" value="{{ lead.region }}">
+  </label>
+  <label>País
+    <input type="text" name="country" value="{{ lead.country }}">
+  </label>
+  <label>Estado
+    <select name="status">
+      {% for status in statuses %}
+        <option value="{{ status }}" {% if lead.status == status %}selected{% endif %}>{{ status }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% if demo_users %}
+  <label>Demo asignada a
+    <select name="demo_user_id">
+      <option value="">Sin asignar</option>
+      {% for user in demo_users %}
+        <option value="{{ user.uid }}" {% if lead.demo_user_id == user.uid %}selected{% endif %}>
+          {{ user.name }} ({{ user.role }})
+        </option>
+      {% endfor %}
+    </select>
+  </label>
+  {% endif %}
+  {% if g.user.role in ['ADMIN', 'JEFE'] and owners %}
+  <label>Asignar a
+    <select name="owner_user_id">
+      <option value="">Mantener</option>
+      {% for user in owners %}
+        <option value="{{ user.uid }}" {% if lead.owner_user_id == user.uid %}selected{% endif %}>
+          {{ user.name }} ({{ user.role }})
+        </option>
+      {% endfor %}
+    </select>
+  </label>
+  {% endif %}
+  <label>Notas
+    <textarea name="notes" rows="4">{{ lead.notes }}</textarea>
+  </label>
+  <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

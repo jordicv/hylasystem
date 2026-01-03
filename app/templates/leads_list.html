@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="header-row">
+  <h1>Demos</h1>
+  <a class="btn btn-primary" href="{{ url_for('lead_new') }}">Crear demo</a>
+</div>
+
+<form method="get" class="filters">
+  <label>Estado
+    <select name="status">
+      <option value="">Todos</option>
+      {% for status in statuses %}
+        <option value="{{ status }}" {% if request.args.get('status') == status %}selected{% endif %}>{{ status }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button type="submit">Filtrar</button>
+</form>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>WhatsApp</th>
+      <th>Estado</th>
+      <th>Demo asignada a</th>
+      <th>Creada</th>
+      <th>Ciudad</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lead in leads %}
+    <tr>
+      <td>{{ lead.first_name }} {{ lead.last_name }}</td>
+      <td>{{ lead.whatsapp_number }}</td>
+      <td>
+        <form method="post" class="inline-form" action="{{ url_for('lead_quick_status', id=lead.id) }}">
+          {{ csrf_input() }}
+          <select name="status">
+            {% for status in statuses %}
+              <option value="{{ status }}" {% if lead.status == status %}selected{% endif %}>{{ status }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </td>
+      <td>
+        {% if can_assign_demo %}
+          <form method="post" class="inline-form" action="{{ url_for('lead_quick_demo_assign', id=lead.id) }}">
+            {{ csrf_input() }}
+            <select name="demo_user_id" {% if not demo_users %}disabled{% endif %}>
+              <option value="">Sin asignar</option>
+              {% if not demo_users %}
+                <option value="">No hay jefes o vendedores</option>
+              {% endif %}
+              {% for user in demo_users %}
+                <option value="{{ user.uid }}" {% if lead.demo_user_id == user.uid %}selected{% endif %}>
+                  {{ user.name }}
+                </option>
+              {% endfor %}
+            </select>
+          </form>
+        {% else %}
+          {{ user_map.get(lead.demo_user_id) or '-' }}
+        {% endif %}
+      </td>
+      <td>
+        {% if lead.created_at %}
+          {{ lead.created_at[8:10] }}/{{ lead.created_at[5:7] }}/{{ lead.created_at[2:4] }}
+        {% else %}
+          -
+        {% endif %}
+      </td>
+      <td>{{ lead.city }}</td>
+      <td><a href="{{ url_for('lead_detail', id=lead.id) }}">Ver</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">Sin demos.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
