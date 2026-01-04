@@ -45,6 +45,17 @@ def lead_statuses():
     ]
 
 
+def lead_status_labels():
+    return {
+        "NUEVO": "Nuevo",
+        "CONTACTADO": "Contactado",
+        "DEMO_AGENDADA": "Demo Agendada",
+        "DEMO_REALIZADA": "Demo Realizada",
+        "VENTA_CERRADA": "Venta Cerrada",
+        "NO_INTERESADO": "No Interesado",
+    }
+
+
 def demo_assignable_roles():
     return {"JEFE", "VENDEDOR"}
 

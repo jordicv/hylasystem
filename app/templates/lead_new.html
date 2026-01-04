@@ -30,7 +30,7 @@
   <label>Estado
     <select name="status">
       {% for status in statuses %}
-        <option value="{{ status }}">{{ status }}</option>
+        <option value="{{ status }}">{{ status_labels[status] }}</option>
       {% endfor %}
     </select>
   </label>

@@ -9,13 +9,52 @@
   </div>
   <div class="card kpi">
     <div class="kpi-icon">DEM</div>
-    <h3>Demos en DEMO_AGENDADA</h3>
+    <h3>Demos Agendadas</h3>
     <div class="kpi-value">{{ cards.demo_agendada }}</div>
   </div>
   <div class="card kpi">
     <div class="kpi-icon">VEN</div>
-    <h3>Demos en VENTA_CERRADA</h3>
+    <h3>Demos Vendidas</h3>
     <div class="kpi-value">{{ cards.venta_cerrada }}</div>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <div class="card chart-card">
+    <div class="chart-title">Estado de mis demos</div>
+    <canvas id="chartStatus" height="140"></canvas>
+  </div>
+  <div class="card chart-card">
+    <div class="chart-title">Actividad 7 días</div>
+    <div class="chart-metric" id="activityTotal">0</div>
+    <div class="chart-subtitle">Demos realizadas</div>
+    <canvas id="chartActivity" height="120"></canvas>
+  </div>
+  <div class="card chart-card">
+    <div class="chart-title">Conversión de demostraciones</div>
+    <div class="donut-wrap">
+      <canvas id="chartConversion" height="160"></canvas>
+      <div class="donut-center">
+        <div class="donut-value" id="conversionPct">0%</div>
+        <div class="donut-label">Conversión</div>
+      </div>
+    </div>
+    <div class="chart-meta">
+      <span>Ventas: <strong id="conversionSales">0</strong></span>
+      <span>Demos: <strong id="conversionDemos">0</strong></span>
+    </div>
+  </div>
+  <div class="card chart-card">
+    <div class="chart-title">Leads sin contacto</div>
+    <div class="progress-row">
+      <div class="progress-track">
+        <div class="progress-fill" id="noContactBar" style="width: 0%;"></div>
+      </div>
+      <div class="progress-label">
+        <span id="noContactPct">0%</span>
+        <span class="muted" id="noContactCount">0 leads</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -26,9 +65,9 @@
       <ul class="list">
         {% for lead in pendientes %}
           <li>
-            <a href="{{ url_for('lead_detail', id=lead.id) }}">
-              {{ lead.first_name }} {{ lead.last_name }} - {{ lead.status }}
-            </a>
+          <a href="{{ url_for('lead_detail', id=lead.id) }}">
+            {{ lead.first_name }} {{ lead.last_name }} - {{ lead.status }}
+          </a>
           </li>
         {% endfor %}
       </ul>
@@ -40,4 +79,81 @@
     {% endif %}
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  (function () {
+    var endpoint = "/dashboard/metrics";
+    fetch(endpoint)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var status = data.lead_status_summary || {};
+        var activity = data.activity_7d || { labels: [], values: [], total: 0 };
+        var conversion = data.demo_conversion || {};
+        var noContact = data.no_contact || {};
+
+        document.getElementById("activityTotal").textContent = activity.total || 0;
+        document.getElementById("conversionPct").textContent = (conversion.porcentaje || 0) + "%";
+        document.getElementById("conversionSales").textContent = conversion.ventas_total || 0;
+        document.getElementById("conversionDemos").textContent = conversion.demos_total || 0;
+        document.getElementById("noContactPct").textContent = (noContact.no_contact_pct || 0) + "%";
+        document.getElementById("noContactCount").textContent = (noContact.no_contact_count || 0) + " leads";
+        document.getElementById("noContactBar").style.width = (noContact.no_contact_pct || 0) + "%";
+
+        new Chart(document.getElementById("chartStatus"), {
+          type: "bar",
+          data: {
+            labels: ["Nuevos", "En proceso", "Vendidos"],
+            datasets: [{
+              data: [status.nuevos || 0, status.en_proceso || 0, status.vendidos || 0],
+              backgroundColor: ["#E6EDF3", "#D7DEE7", "#3FB4A5"],
+              borderRadius: 8,
+              barThickness: 14
+            }]
+          },
+          options: {
+            indexAxis: "y",
+            plugins: { legend: { display: false }, tooltip: { enabled: true } },
+            scales: { x: { display: false }, y: { display: true, grid: { display: false } } }
+          }
+        });
+
+        new Chart(document.getElementById("chartActivity"), {
+          type: "line",
+          data: {
+            labels: activity.labels,
+            datasets: [{
+              data: activity.values,
+              borderColor: "#3FB4A5",
+              backgroundColor: "rgba(63, 180, 165, 0.15)",
+              tension: 0.4,
+              pointRadius: 0,
+              fill: true
+            }]
+          },
+          options: {
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: { x: { display: false }, y: { display: false } }
+          }
+        });
+
+        new Chart(document.getElementById("chartConversion"), {
+          type: "doughnut",
+          data: {
+            labels: ["Con venta", "Sin venta"],
+            datasets: [{
+              data: [conversion.ventas_total || 0, Math.max((conversion.demos_total || 0) - (conversion.ventas_total || 0), 0)],
+              backgroundColor: ["#3FB4A5", "#E5E7EB"],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            cutout: "72%",
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+          }
+        });
+      })
+      .catch(function () {});
+  })();
+</script>
 {% endblock %}

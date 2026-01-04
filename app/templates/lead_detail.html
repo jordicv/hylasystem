@@ -38,10 +38,17 @@
 </section>
 
 <section class="section">
-  <h2>Historial de cambios</h2>
+  <h2>Última modificación</h2>
   <ul class="list">
-    {% for log in logs %}
-      <li>{{ log.timestamp }} - {{ log.actor_name }} - {{ log.action }}</li>
+    {% for log in logs[:1] %}
+      <li>
+        {% if log.timestamp %}
+          {{ log.timestamp[8:10] }}/{{ log.timestamp[5:7] }}/{{ log.timestamp[2:4] }}
+        {% else %}
+          -
+        {% endif %}
+        - Modificado por "{{ log.actor_name or 'Sistema' }}"
+      </li>
     {% else %}
       <li>Sin movimientos recientes.</li>
     {% endfor %}

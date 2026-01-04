@@ -30,7 +30,7 @@
   <label>Estado
     <select name="status">
       {% for status in statuses %}
-        <option value="{{ status }}" {% if lead.status == status %}selected{% endif %}>{{ status }}</option>
+        <option value="{{ status }}" {% if lead.status == status %}selected{% endif %}>{{ status_labels[status] }}</option>
       {% endfor %}
     </select>
   </label>

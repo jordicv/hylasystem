@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
-from flask import Flask, g, redirect, render_template, request, session, url_for, flash, abort
+from flask import Flask, g, redirect, render_template, request, session, url_for, flash, abort, jsonify
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import generate_csrf
 from markupsafe import Markup
@@ -43,6 +43,7 @@ from app.services.utils import (
     generate_maps_link,
     is_valid_whatsapp,
     lead_statuses,
+    lead_status_labels,
     demo_assignable_roles,
     user_roles,
     user_statuses,
@@ -68,7 +69,10 @@ def create_app():
             token = generate_csrf()
             return Markup(f'<input type="hidden" name="csrf_token" value="{token}">')
 
-        return {"csrf_input": csrf_input}
+        return {
+            "csrf_input": csrf_input,
+            "status_labels": lead_status_labels(),
+        }
 
     @app.before_request
     def load_user():
@@ -161,7 +165,89 @@ def create_app():
             "demo_agendada": len([l for l in leads if l.get("status") == "DEMO_AGENDADA"]),
             "venta_cerrada": len([l for l in leads if l.get("status") == "VENTA_CERRADA"]),
         }
-        return render_template("dashboard.html", cards=cards, pendientes=pendientes)
+        return render_template(
+            "dashboard.html",
+            cards=cards,
+            pendientes=pendientes,
+            status_labels=lead_status_labels(),
+        )
+
+    @app.route("/dashboard/metrics")
+    @login_required
+    def dashboard_metrics():
+        leads = list_leads(g.user, status_filter=None)
+        now = datetime.utcnow()
+        start_30 = now - timedelta(days=30)
+        start_7 = now - timedelta(days=6)
+
+        nuevos = 0
+        en_proceso = 0
+        vendidos = 0
+
+        activity_counts = { (start_7 + timedelta(days=i)).date(): 0 for i in range(7) }
+        demos_total = 0
+        ventas_total = 0
+
+        no_contact_count = 0
+        total_leads = len(leads)
+
+        for lead in leads:
+            status = lead.get("status")
+            created_at = _parse_dt(lead.get("created_at"))
+            updated_at = _parse_dt(lead.get("updated_at"))
+
+            if created_at and created_at < start_30:
+                within_30 = False
+            else:
+                within_30 = True
+
+            if within_30:
+                if status == "NUEVO":
+                    nuevos += 1
+                elif status in {"CONTACTADO", "DEMO_AGENDADA", "DEMO_REALIZADA"}:
+                    en_proceso += 1
+                elif status == "VENTA_CERRADA":
+                    vendidos += 1
+
+            if updated_at and updated_at.date() in activity_counts and status == "DEMO_REALIZADA":
+                activity_counts[updated_at.date()] += 1
+
+            if updated_at and updated_at >= start_30 and status in {"DEMO_REALIZADA", "VENTA_CERRADA"}:
+                demos_total += 1
+                if status == "VENTA_CERRADA":
+                    ventas_total += 1
+
+            if status == "NUEVO" and created_at and created_at <= now - timedelta(hours=48):
+                no_contact_count += 1
+
+        demos_pct = int((ventas_total / demos_total) * 100) if demos_total else 0
+        no_contact_pct = int((no_contact_count / total_leads) * 100) if total_leads else 0
+
+        activity_labels = [d.strftime("%d/%m") for d in activity_counts.keys()]
+        activity_values = list(activity_counts.values())
+
+        return jsonify(
+            lead_status_summary={
+                "nuevos": nuevos,
+                "en_proceso": en_proceso,
+                "vendidos": vendidos,
+            },
+            activity_7d={
+                "labels": activity_labels,
+                "values": activity_values,
+                "total": sum(activity_values),
+            },
+            demo_conversion={
+                "demos_total": demos_total,
+                "ventas_total": ventas_total,
+                "porcentaje": demos_pct,
+            },
+            no_contact={
+                "total_leads": total_leads,
+                "no_contact_count": no_contact_count,
+                "no_contact_pct": no_contact_pct,
+            },
+        )
 
     @app.route("/admin/usuarios", methods=["GET", "POST"])
     @login_required
@@ -329,6 +415,7 @@ def create_app():
             user_map=user_map,
             demo_users=demo_users,
             can_assign_demo=g.user.get("role") in {"ADMIN", "JEFE"},
+            status_labels=lead_status_labels(),
         )
 
     @app.route("/leads/nuevo", methods=["GET", "POST"])
@@ -343,6 +430,7 @@ def create_app():
                     "lead_new.html",
                     statuses=lead_statuses(),
                     demo_users=_get_demo_users(),
+                    status_labels=lead_status_labels(),
                 )
             demo_user_id = form.get("demo_user_id") or None
             if not demo_user_id and g.user.get("role") in demo_assignable_roles():
@@ -370,6 +458,7 @@ def create_app():
             "lead_new.html",
             statuses=lead_statuses(),
             demo_users=demo_users,
+            status_labels=lead_status_labels(),
         )
 
     @app.route("/leads/<id>")
@@ -406,6 +495,7 @@ def create_app():
             images=images,
             logs=logs,
             demo_user_map=demo_user_map,
+            status_labels=lead_status_labels(),
         )
 
     @app.route("/leads/<id>/editar", methods=["GET", "POST"])
@@ -428,6 +518,8 @@ def create_app():
                     lead=lead,
                     statuses=lead_statuses(),
                     owners=possible_owners,
+                    demo_users=demo_users,
+                    status_labels=lead_status_labels(),
                 )
             updates = {
                 "first_name": form.get("first_name", "").strip(),
@@ -458,6 +550,7 @@ def create_app():
             statuses=lead_statuses(),
             owners=possible_owners,
             demo_users=demo_users,
+            status_labels=lead_status_labels(),
         )
 
     @app.route("/leads/<id>/subir-imagen", methods=["POST"])
@@ -499,6 +592,16 @@ def create_app():
 
     def _role_name(user):
         return (user.get("role") or "").strip().upper()
+
+    def _parse_dt(value):
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, str) and value:
+            try:
+                return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(tzinfo=None)
+            except ValueError:
+                return None
+        return None
 
     @app.route("/leads/<id>/demo-asignada", methods=["POST"])
     @login_required

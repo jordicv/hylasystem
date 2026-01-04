@@ -6,18 +6,19 @@
 </div>
 
 <form method="get" class="filters">
-  <label>Estado
-    <select name="status">
-      <option value="">Todos</option>
+      <label>Estado
+        <select name="status">
+          <option value="">Todos</option>
       {% for status in statuses %}
-        <option value="{{ status }}" {% if request.args.get('status') == status %}selected{% endif %}>{{ status }}</option>
+        <option value="{{ status }}" {% if request.args.get('status') == status %}selected{% endif %}>{{ status_labels[status] if status_labels is defined else status }}</option>
       {% endfor %}
-    </select>
-  </label>
-  <button type="submit">Filtrar</button>
+        </select>
+      </label>
+  <button type="submit" class="btn btn-outline">Filtrar</button>
 </form>
 
-<table class="table">
+<div class="table-shell">
+  <table class="table">
   <thead>
     <tr>
       <th>Nombre</th>
@@ -26,7 +27,7 @@
       <th>Demo asignada a</th>
       <th>Creada</th>
       <th>Ciudad</th>
-      <th></th>
+      <th class="table-actions"></th>
     </tr>
   </thead>
   <tbody>
@@ -39,7 +40,7 @@
           {{ csrf_input() }}
           <select name="status">
             {% for status in statuses %}
-              <option value="{{ status }}" {% if lead.status == status %}selected{% endif %}>{{ status }}</option>
+              <option value="{{ status }}" {% if lead.status == status %}selected{% endif %}>{{ status_labels[status] if status_labels is defined else status }}</option>
             {% endfor %}
           </select>
         </form>
@@ -72,11 +73,12 @@
         {% endif %}
       </td>
       <td>{{ lead.city }}</td>
-      <td><a href="{{ url_for('lead_detail', id=lead.id) }}">Ver</a></td>
+      <td class="table-actions"><a href="{{ url_for('lead_detail', id=lead.id) }}">Ver</a></td>
     </tr>
     {% else %}
     <tr><td colspan="7">Sin demos.</td></tr>
     {% endfor %}
   </tbody>
-</table>
+  </table>
+</div>
 {% endblock %}

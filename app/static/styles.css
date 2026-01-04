@@ -1,12 +1,12 @@
 :root {
-  --bg: #f7f7fb;
+  --bg: #f7f9fb;
   --surface: #ffffff;
-  --text: #1b1b1f;
-  --muted: #6f6f79;
-  --border: #e6e6ef;
-  --shadow: 0 12px 30px rgba(19, 19, 28, 0.08);
-  --accent: #1e5b4f;
-  --accent-2: #d2a343;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e6edf3;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  --accent: #3fb4a5;
+  --accent-2: #6ec6ca;
   --danger: #c2413b;
 }
 
@@ -27,6 +27,11 @@ body.auth .layout {
   grid-template-columns: 1fr;
 }
 
+body.auth {
+  background: linear-gradient(rgba(15, 15, 18, 0.45), rgba(15, 15, 18, 0.45)),
+    url("/static/hyla%20wallpaper.png") center/cover no-repeat fixed;
+}
+
 .layout {
   min-height: 100vh;
   display: grid;
@@ -35,7 +40,7 @@ body.auth .layout {
 }
 
 .sidebar {
-  background: #111114;
+  background: linear-gradient(180deg, #0e1116 0%, #0f172a 60%, #0b1f1a 100%);
   color: #fff;
   padding: 28px 24px;
   display: flex;
@@ -61,16 +66,12 @@ body.auth .layout {
   filter: invert(1) brightness(1.1);
 }
 
-.brand-mark {
-  color: var(--accent-2);
-  font-size: 20px;
-}
 
 .brand-sub {
   font-size: 12px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #c6c6d1;
+  color: #9fb3ad;
   width: 100%;
 }
 
@@ -81,23 +82,24 @@ body.auth .layout {
 }
 
 .nav-item {
-  color: #f5f5f7;
+  color: #c9d1d9;
   text-decoration: none;
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid transparent;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(63, 180, 165, 0.08);
+  border-color: rgba(63, 180, 165, 0.12);
 }
 
 .nav-item.active {
-  background: rgba(210, 163, 67, 0.14);
-  border-color: rgba(210, 163, 67, 0.4);
-  color: #fff;
+  background: rgba(63, 180, 165, 0.12);
+  border-left: 3px solid var(--accent);
+  color: #e6fffb;
+  box-shadow: 0 0 12px rgba(63, 180, 165, 0.18);
 }
 
 .side-user {
@@ -185,11 +187,12 @@ body.auth .layout {
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.18s ease;
 }
 
 .container {
   padding: 28px 32px 48px;
-  max-width: 1200px;
+  max-width: 100%;
   width: 100%;
 }
 
@@ -209,7 +212,7 @@ h3 {
 }
 
 .card {
-  background: var(--surface);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
@@ -257,7 +260,7 @@ body.auth .main {
   width: 36px;
   height: 36px;
   border-radius: 12px;
-  background: rgba(30, 91, 79, 0.12);
+  background: rgba(63, 180, 165, 0.14);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -266,8 +269,96 @@ body.auth .main {
 }
 
 .kpi-value {
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 700;
+}
+
+.kpi h3 {
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.chart-card {
+  display: grid;
+  gap: 12px;
+}
+
+.chart-title {
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+.chart-metric {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.chart-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: -6px;
+}
+
+.chart-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.donut-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.donut-center {
+  position: absolute;
+  text-align: center;
+}
+
+.donut-value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.donut-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.progress-row {
+  display: grid;
+  gap: 12px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: #edf2f7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: rgba(245, 158, 11, 0.5);
+  border-radius: 999px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
 }
 
 .section {
@@ -335,6 +426,17 @@ textarea:focus {
   min-height: 44px;
 }
 
+.btn-compact {
+  padding: 12px 16px;
+  min-height: 44px;
+  font-size: 14px;
+}
+
+.form-grid .btn {
+  justify-self: start;
+  width: auto;
+}
+
 .btn-primary {
   background: var(--accent);
   color: #fff;
@@ -365,33 +467,40 @@ textarea:focus {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  margin-bottom: 12px;
+}
+
+.table-shell {
+  width: 100%;
+  max-width: none;
+  overflow-x: visible;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--surface);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
+  margin: 0;
+  font-size: 14px;
+  min-width: 100%;
+  text-align: left;
+  table-layout: auto;
 }
 
-.table {
-  display: block;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.table thead,
-.table tbody,
-.table tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
+.table th,
 .table td {
+  overflow-wrap: anywhere;
   word-break: break-word;
+  vertical-align: top;
+}
+
+.table-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .table th,
@@ -404,8 +513,8 @@ textarea:focus {
 .table thead th {
   position: sticky;
   top: 0;
-  background: #fafafe;
-  font-size: 13px;
+  background: #f7fafc;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--muted);
@@ -416,7 +525,7 @@ textarea:focus {
 }
 
 .table tbody tr:hover {
-  background: #f1f1f8;
+  background: #eff6f7;
 }
 
 .filters {
@@ -425,6 +534,14 @@ textarea:focus {
   gap: 12px;
   margin: 16px 0;
   flex-wrap: wrap;
+}
+
+.filters label {
+  margin-bottom: 0;
+}
+
+.filters button {
+  align-self: flex-end;
 }
 
 .list {
@@ -459,22 +576,22 @@ textarea:focus {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  background: rgba(30, 91, 79, 0.12);
-  color: var(--accent);
+  background: rgba(63, 180, 165, 0.12);
+  color: #1f7f74;
 }
 
 .badge.warning {
-  background: rgba(210, 163, 67, 0.18);
-  color: #8a5d1e;
+  background: rgba(110, 198, 202, 0.18);
+  color: #1f7f74;
 }
 
 .badge.success {
-  background: rgba(34, 197, 94, 0.15);
-  color: #166534;
+  background: rgba(63, 180, 165, 0.2);
+  color: #1f7f74;
 }
 
 .badge.muted {
-  background: rgba(100, 100, 120, 0.12);
+  background: rgba(100, 116, 139, 0.12);
   color: var(--muted);
 }
 
@@ -556,15 +673,15 @@ textarea:focus {
 .chip {
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(30, 91, 79, 0.12);
-  color: var(--accent);
+  background: rgba(63, 180, 165, 0.12);
+  color: #1f7f74;
   font-weight: 600;
   font-size: 12px;
 }
 
 .chip.secondary {
-  background: rgba(210, 163, 67, 0.18);
-  color: #8a5d1e;
+  background: rgba(63, 180, 165, 0.08);
+  color: #1f7f74;
 }
 
 .sidebar-backdrop {
@@ -618,6 +735,10 @@ textarea:focus {
     align-items: flex-start;
   }
 
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
   .table thead th {
     position: static;
   }
@@ -642,6 +763,51 @@ textarea:focus {
     align-items: stretch;
   }
 
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-meta {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .topbar-left {
+    gap: 8px;
+  }
+
+  .icon-btn {
+    padding: 8px 10px;
+  }
+
+  .table-shell {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table {
+    font-size: 13px;
+    min-width: 900px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 12px;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+
+  .filters button,
+  .filters select,
+  .filters input {
+    width: 100%;
+  }
+
   .auth-card {
     margin: 32px auto;
     padding: 18px;
@@ -653,5 +819,25 @@ textarea:focus {
 
   .kpi-value {
     font-size: 26px;
+  }
+
+  .chart-card canvas {
+    height: 110px !important;
+  }
+
+  .donut-wrap canvas {
+    height: 130px !important;
+  }
+
+  .chart-card {
+    gap: 8px;
+  }
+
+  .chart-metric {
+    font-size: 22px;
+  }
+
+  .chart-title {
+    font-size: 13px;
   }
 }
