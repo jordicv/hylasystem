@@ -85,7 +85,17 @@ def list_lead_images(lead_id):
         .order("uploaded_at", desc=True)
         .execute()
     )
-    return [dict(row) for row in result.data]
+    bucket = os.environ.get("SUPABASE_STORAGE_BUCKET", "lead-images")
+    images = []
+    for row in result.data:
+        item = dict(row)
+        storage_path = item.get("storage_path")
+        if storage_path:
+            signed = admin.storage.from_(bucket).create_signed_url(storage_path, 60 * 60 * 6)
+            url = signed.get("signedURL") or signed.get("signedUrl") or item.get("url") or ""
+            item["url"] = url
+        images.append(item)
+    return images
 
 
 def upload_lead_image(actor, lead_id, file):
