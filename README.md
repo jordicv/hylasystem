@@ -97,6 +97,10 @@ pip install -r requirements.txt
 flask --app app run
 ```
 
+## Vercel
+- El entrypoint es `api/index.py` con `vercel.json` incluido.
+- Para ejecutar localmente en Python directo puedes usar: `python run.py`.
+
 ## Notas
 - El primer arranque crea un **ADMIN** usando las variables `BOOTSTRAP_*` (requiere `SUPABASE_SERVICE_ROLE_KEY`).
 - El login usa Supabase Auth (email/contraseña).
