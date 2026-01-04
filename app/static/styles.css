@@ -29,7 +29,7 @@ body.auth .layout {
 
 body.auth {
   background: linear-gradient(rgba(15, 15, 18, 0.45), rgba(15, 15, 18, 0.45)),
-    url("/static/hyla%20wallpaper.png") center/cover no-repeat fixed;
+    url("/static/hyla_login.png") center/cover no-repeat fixed;
 }
 
 .layout {
