@@ -1,0 +1,200 @@
+.login-page .layout {
+  min-height: 100vh;
+  background: #f7f9fb;
+}
+
+.login-topbar {
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid #e6edf3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.login-brand img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.login-meta {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.login-hero {
+  min-height: calc(100vh - 60px);
+  display: grid;
+  place-items: center;
+  padding: 32px 16px 56px;
+  position: relative;
+  background: url("/static/hyla_login.png") center/cover no-repeat;
+  overflow: hidden;
+}
+
+.login-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 0;
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: min(520px, 92vw);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.login-title h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.login-title p {
+  margin: 6px 0 18px;
+  color: rgba(248, 250, 252, 0.8);
+  font-size: 14px;
+}
+
+.login-title.centered {
+  text-align: center;
+}
+
+.login-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.login-logo {
+  height: 64px;
+  width: auto;
+  opacity: 0.9;
+  filter: invert(1) brightness(1.1) drop-shadow(0 4px 12px rgba(255, 255, 255, 0.25));
+}
+
+.login-form {
+  display: grid;
+  gap: 12px;
+}
+
+.login-label {
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.login-input-wrap {
+  position: relative;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.login-form input {
+  height: 48px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  padding: 0 14px 0 44px;
+  font-size: 15px;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(6px);
+  transition: box-shadow 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.login-form input::placeholder {
+  color: rgba(17, 24, 39, 0.65);
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #3fb4a5;
+  box-shadow: 0 0 0 4px rgba(63, 180, 165, 0.18);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.login-btn {
+  margin-top: 6px;
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  background: #3fb4a5;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.login-btn:hover {
+  background: #2e9e91;
+  transform: translateY(-1px);
+}
+
+.login-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(63, 180, 165, 0.2);
+}
+
+.login-flash-group {
+  margin: 0 0 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.login-flash {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  border: 1px solid transparent;
+}
+
+.login-flash.error {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #7f1d1d;
+}
+
+@media (max-width: 768px) {
+  .login-topbar {
+    padding: 0 16px;
+  }
+
+  .login-card {
+    padding: 24px;
+  }
+
+  .login-logo {
+    height: 56px;
+  }
+}

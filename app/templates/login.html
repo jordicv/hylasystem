@@ -1,16 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card auth-card">
-  <h1>Iniciar sesión</h1>
-  <form method="post">
-    {{ csrf_input() }}
-    <label>Correo
-      <input type="email" name="email" required>
-    </label>
-    <label>Contraseña
-      <input type="password" name="password" required>
-    </label>
-    <button type="submit" class="btn btn-primary">Entrar</button>
-  </form>
-</div>
+<header class="login-topbar">
+  <div class="login-brand">
+    <img src="{{ url_for('static', filename='Hyla-International-Logo-black.svg') }}" alt="HYLA">
+    <span>Sales Companion</span>
+  </div>
+  <div class="login-meta">Acceso interno</div>
+</header>
+
+<main class="login-hero">
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <img class="login-logo" src="{{ url_for('static', filename='Hyla-International-Logo-black.svg') }}" alt="HYLA">
+    </div>
+    <div class="login-title centered">
+      <h1>HYLA SALES COMPANION</h1>
+      <p>Accede a tu panel de ventas HYLA.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="login-flash-group">
+          {% for category, message in messages %}
+            <div class="login-flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" class="login-form">
+      {{ csrf_input() }}
+      <label class="login-label" for="email">Correo</label>
+      <div class="login-input-wrap">
+        <span class="login-input-icon" aria-hidden="true">✉️</span>
+        <input id="email" type="email" name="email" placeholder="tu@correo.com" required>
+      </div>
+      <label class="login-label" for="password">Contraseña</label>
+      <div class="login-input-wrap">
+        <span class="login-input-icon" aria-hidden="true">🔒</span>
+        <input id="password" type="password" name="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="login-btn">Entrar</button>
+    </form>
+  </div>
+</main>
 {% endblock %}

@@ -5,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HYLA CRM</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  {% if request.endpoint == 'login' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+  {% endif %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="{% if not g.user %}auth{% endif %}">
+<body class="{% if not g.user %}auth{% endif %}{% if request.endpoint == 'login' %} login-page{% endif %}">
   <div class="layout">
     {% if g.user %}
     <aside class="sidebar" id="sidebar">
@@ -39,43 +42,50 @@
     {% endif %}
 
     <div class="main">
-      <header class="topbar">
-        <div class="topbar-left">
-          {% if g.user %}
-            <button class="icon-btn" id="sidebarToggle" type="button" aria-label="Abrir menú">Menu</button>
-          {% endif %}
-          <div class="topbar-title">
-            <img class="topbar-logo" src="{{ url_for('static', filename='Hyla-International-Logo-black.svg') }}" alt="HYLA">
-            <span class="topbar-subtitle">Sales Companion</span>
-          </div>
-        </div>
-        {% if g.user %}
-          <div class="topbar-user">
-            <div class="chip">{{ g.user.role }}</div>
-            <div class="chip secondary">{{ g.user.city }}</div>
-          </div>
-        {% else %}
-          <div class="topbar-meta">Acceso interno</div>
-        {% endif %}
-      </header>
-
-      <main class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="flash-group">
-              {% for category, message in messages %}
-                <div class="flash {{ category }}">{{ message }}</div>
-              {% endfor %}
+      {% if request.endpoint != 'login' %}
+        <header class="topbar">
+          <div class="topbar-left">
+            {% if g.user %}
+              <button class="icon-btn" id="sidebarToggle" type="button" aria-label="Abrir menú">Menu</button>
+            {% endif %}
+            <div class="topbar-title">
+              <img class="topbar-logo" src="{{ url_for('static', filename='Hyla-International-Logo-black.svg') }}" alt="HYLA">
+              <span class="topbar-subtitle">Sales Companion</span>
             </div>
+          </div>
+          {% if g.user %}
+            <div class="topbar-user">
+              <div class="chip">{{ g.user.role }}</div>
+              <div class="chip secondary">{{ g.user.city }}</div>
+            </div>
+          {% else %}
+            <div class="topbar-meta">Acceso interno</div>
           {% endif %}
-        {% endwith %}
+        </header>
+      {% endif %}
 
-        {% if g.user and g.user.status == 'PENDIENTE' %}
-          <div class="banner">Cuenta pendiente de activación. Puedes navegar, pero no realizar cambios.</div>
-        {% endif %}
+      {% if request.endpoint != 'login' %}
+        <main class="container">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="flash-group">
+                {% for category, message in messages %}
+                  <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
 
-        {% block content %}{% endblock %}
-      </main>
+          {% if g.user and g.user.status == 'PENDIENTE' %}
+            <div class="banner">Cuenta pendiente de activación. Puedes navegar, pero no realizar cambios.</div>
+          {% endif %}
+      {% endif %}
+
+      {% block content %}{% endblock %}
+
+      {% if request.endpoint != 'login' %}
+        </main>
+      {% endif %}
     </div>
   </div>
   <script src="{{ url_for('static', filename='app.js') }}"></script>
